@@ -39,6 +39,20 @@ if(isset($_POST['login'])){
             }
     }
 }
+else{
+    // Insert admin user if not exists
+    $sql_query = "SELECT COUNT(*) as cntUser FROM customer WHERE username='admin'";
+    $result = mysqli_query($con,$sql_query);
+    $row = mysqli_fetch_array($result);
+    $count = $row['cntUser'];
+
+    if($count == 0){
+        // Create admin user with a default password
+        $default_password = md5('yourpassword');
+        $sql_query = "INSERT INTO customer (username, password, create_date) VALUES ('admin', '$default_password', NOW())";
+        mysqli_query($con,$sql_query);
+    }
+}
 ?>
 
 <!DOCTYPE html>

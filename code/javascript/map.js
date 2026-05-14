@@ -8,7 +8,7 @@
 
 //Here the code will be housed for the maps page.
 
-mapboxgl.accessToken='pk.eyJ1IjoiYWt1a3VjIiwiYSI6ImNrNmt3MWZxcjA1anEzam4wOWNxeTgzaGgifQ.og9fg35Kib4vh_bdF4JUOg';
+mapboxgl.accessToken=process.env.MAPBOX_TOKEN || '';
 var map=new mapboxgl.Map({
   container:'map',
   style:'mapbox://styles/akukuc/ck6kw1ynk14km1ima516zne9q',

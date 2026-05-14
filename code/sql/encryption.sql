@@ -1,3 +1,5 @@
-USE users;
-
-ALTER TABLE customer ENCRYPTION='Y';
+-- Table encryption requires keyring plugin configured in MySQL server config.
+-- Skipped in Docker dev environment (keyring_file not loaded).
+-- To enable in production, add keyring_file plugin to my.cnf and uncomment:
+-- USE users;
+-- ALTER TABLE customer ENCRYPTION='Y';

@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      args:
+        - HTTP_PROXY=${HTTP_PROXY:-}
+        - HTTPS_PROXY=${HTTPS_PROXY:-}
+    container_name: logistics-web
+    restart: unless-stopped
+    networks:
+      br-aux:
+        ipv4_address: 10.20.20.75
+      internal:
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=logistics-tracking-ayz
+      - MYSQL_PASSWORD=70210f093ae4df7947b8ccfe4a8181a8
+      - MYSQL_DATABASE=users
+    volumes:
+      - .:/var/www/html
+
+  db:
+    image: mysql:8.0
+    container_name: logistics-db
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=users
+      - MYSQL_USER=logistics-tracking-ayz
+      - MYSQL_PASSWORD=70210f093ae4df7947b8ccfe4a8181a8
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+    cap_add:
+      - SYS_NICE
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:
+
+networks:
+  br-aux:
+    external: true
+    name: br-aux
+  internal:
+    driver: bridge
